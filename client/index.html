@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-tac-toe</title>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <style>
+        :root {
+            font: 1rem 'PT Sans', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .board {
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            justify-content: center;
+            align-content: center;
+            grid-template-columns: repeat(3, auto);
+            margin-top: -100px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            border: 1px solid black;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cell.x,
+        .cell.o {
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .cell.x::before,
+        .cell.x::after {
+            content: '';
+            position: absolute;
+            height: 13.5px;
+            width: 90px;
+            background-color: black;
+        }
+
+        .cell.x::before {
+            transform: rotate(45deg);
+        }
+
+        .cell.x::after {
+            transform: rotate(-45deg);
+        }
+
+        .cell.o::before,
+        .cell.o::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .cell.o::before {
+            height: 90px;
+            width: 90px;
+            background-color: black;
+        }
+
+        .cell.o::after {
+            height: 63px;
+            width: 63px;
+            background-color: white;
+        }
+
+        .disabledcell {
+            pointer-events: none;
+        }
+
+        .cell:nth-child(1),
+        .cell:nth-child(2),
+        .cell:nth-child(3) {
+            border-top: none;
+        }
+
+        .cell:nth-child(3n + 1) {
+            border-left: none;
+        }
+
+        .cell:nth-child(3n + 3) {
+            border-right: none;
+        }
+
+        .cell:nth-child(7),
+        .cell:nth-child(8),
+        .cell:nth-child(9) {
+            border-bottom: none;
+        }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-block;
+            font: inherit;
+            border: 0;
+            outline: 0;
+            transition: all 200ms ease-in;
+            cursor: pointer;
+            background: #7f8ff4;
+            color: white;
+            box-shadow: 0 0 10px 2px rgba(0, 0, 0, .1);
+            border-radius: 2px;
+            padding: 12px 36px;
+        }
+
+        .input {
+            width: 160px;
+            height: 5px;
+            background: white;
+            color: #a3a3a3;
+            font: inherit;
+            box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.1);
+            border: 0;
+            outline: 0;
+            padding: 22px 18px;
+        }
+
+        .dialog{
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dialog-active{
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="info" id="info">
+        <div id="roomid" style="font-weight: bold;"></div>
+        <br>
+        <form class="form" id="iform">
+            <input class="input" type="text" id="roomidinput" placeholder="Enter room id">
+            <button class="btn" id="joinbtn">Join</button>
+        </form>
+        <br>
+        <div id="status">Waiting for player</div>
+        <div id="turn"></div>
+    </div>
+    <div class="board" id="board">
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+        <div class="cell" data-cell></div>
+    </div>
+    <div class="dialog dialog-active" id="dialog">
+        <form class="form" id="dform">
+            <input class="input" type="text" id="nameinput" placeholder="Enter your name">
+            <button class="btn" id="submitname">Ok</button>
+        </form>
+        <div hidden id="alert-container">
+            <div style="justify-content: center; align-items: center;">
+                <div id="message" style="color: white; font-size: 20px;"></div>
+                <br><br>
+                <div style="position: absolute; left: 50%; transform: translateX(-50%);">
+                    <button class="btn" id="yesbtn">Yes</button>
+                    <button class="btn" id="nobtn">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/client/game.js"></script>        
+</body>
+
+</html>
